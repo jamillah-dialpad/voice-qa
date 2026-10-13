@@ -25,10 +25,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; }
     body { background-color: var(--bg-main); color: var(--text-dark); padding: 24px; }
     header { display: flex; justify-content: space-between; align-items: center; background: var(--white); padding: 16px 24px; border-radius: 12px; border: 1px solid var(--card-border); box-shadow: 0 4px 12px rgba(124, 82, 211, 0.05); margin-bottom: 24px; }
-    .title-container { display: flex; align-items: center; gap: 12px; }
-    .speech-icon { font-size: 28px; color: var(--primary); display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; background: var(--card-bg); border-radius: 10px; border: 1px solid var(--card-border); }
     h1 { color: var(--primary); font-size: 24px; font-weight: 700; }
-    .subtitle { color: var(--text-muted); font-size: 13px; margin-top: 2px; }
+    .subtitle { color: var(--text-muted); font-size: 13px; margin-top: 4px; }
     .btn-group { display: flex; gap: 10px; }
     button, .btn { background-color: var(--primary); color: var(--white); border: none; padding: 9px 16px; border-radius: 8px; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; text-decoration: none; }
     button:hover, .btn:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
@@ -77,12 +75,9 @@
 <body>
 
   <header>
-    <div class="title-container">
-      <div class="speech-icon">💬</div>
-      <div>
-        <h1>Voice QA</h1>
-        <div class="subtitle">Voice Agent Evaluation Dashboard</div>
-      </div>
+    <div>
+      <h1>Voice QA</h1>
+      <div class="subtitle">Multi-Call Listening Rubric & Performance Analytics</div>
     </div>
     <div class="btn-group">
       <button onclick="exportToExcel()">📊 Export to Excel (.xlsx)</button>

@@ -64,11 +64,11 @@
                 <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
                     <div class="flex items-center gap-2.5">
                         <div class="p-2 bg-lavender-800/80 rounded-xl border border-lavender-400/30 shadow-inner">
-                            <i data-lucide="mic-vocal" class="w-5 h-5 text-lavender-200"></i>
+                            <i data-lucide="message-square-text" class="w-5 h-5 text-lavender-200"></i>
                         </div>
                         <div>
                             <h1 class="text-xl font-bold tracking-tight text-white leading-none">Voice QA</h1>
-                            <span class="text-[10px] text-lavender-300 font-medium">Multilingual & Voice Agent Evaluation Engine</span>
+                            <span class="text-[10px] text-lavender-300 font-medium">Voice Agent Evaluation Dashboard</span>
                         </div>
                     </div>
 
@@ -155,7 +155,7 @@
                         <p id="disp-description" class="text-xs text-slate-500 italic">"Articulate, empathetic, and culturally adaptable voice agent capable of smooth bilingual code-switching and domain jargon clarity."</p>
                     </div>
                     <div class="flex md:flex-col items-end gap-1.5 text-xs bg-lavender-50/80 p-3 rounded-xl border border-lavender-200/80 min-w-[220px] w-full lg:w-auto">
-                        <div><span class="text-slate-500">Reviewer:</span> <span id="disp-reviewer" class="font-semibold text-lavender-950">QA Lead</span></div>
+                        <div><span class="text-slate-500">Reviewer:</span> <span id="disp-reviewer" class="font-semibold text-lavender-950">Senior QA Lead</span></div>
                         <div><span class="text-slate-500">Target Benchmark:</span> <span id="disp-target" class="font-bold text-lavender-700">3.50 / 5.00</span></div>
                         <div><span class="text-slate-500">Evaluated Calls:</span> <span id="disp-call-count" class="font-semibold text-lavender-950">5 calls</span></div>
                     </div>
@@ -177,7 +177,11 @@
                     </div>
 
                     <form id="setup-form" onsubmit="event.preventDefault(); saveClientProfileFromTab();" class="space-y-4 text-xs">
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1">QA Reviewer Name / Team *</label>
+                                <input type="text" id="setup-input-reviewer" required placeholder="e.g. Senior QA Lead" class="w-full bg-lavender-50/50 border border-lavender-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-lavender-500 focus:outline-none">
+                            </div>
                             <div>
                                 <label class="block font-semibold text-slate-700 mb-1">Client Name *</label>
                                 <input type="text" id="setup-input-name" required placeholder="e.g. Apex Health Assistant" class="w-full bg-lavender-50/50 border border-lavender-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-lavender-500 focus:outline-none">
@@ -829,11 +833,12 @@
             document.getElementById("disp-usecase").innerHTML = `<strong>Workflow:</strong> ${client.usecase || 'N/A'}`;
             document.getElementById("disp-purpose").innerHTML = `<strong>Agent Purpose:</strong> ${client.purpose || 'N/A'}`;
             document.getElementById("disp-description").innerText = `"${client.description || 'No description provided.'}"`;
-            document.getElementById("disp-reviewer").innerText = client.reviewer || "QA Lead";
+            document.getElementById("disp-reviewer").innerText = client.reviewer || "Senior QA Lead";
             document.getElementById("disp-target").innerText = `${Number(client.targetBenchmark || 3.5).toFixed(2)} / 5.00`;
             document.getElementById("disp-call-count").innerText = `${client.callCount || 0} calls`;
 
             // Setup Tab Form Inputs
+            document.getElementById("setup-input-reviewer").value = client.reviewer || "";
             document.getElementById("setup-input-name").value = client.name || "";
             document.getElementById("setup-input-company").value = client.company || "";
             document.getElementById("setup-input-version").value = client.version || "v1.0";
@@ -854,6 +859,7 @@
             const client = allClients[activeClientId];
             if (!client) return;
 
+            client.reviewer = document.getElementById("setup-input-reviewer").value;
             client.name = document.getElementById("setup-input-name").value;
             client.company = document.getElementById("setup-input-company").value;
             client.version = document.getElementById("setup-input-version").value;
@@ -913,7 +919,7 @@
 
                 tr.innerHTML = `
                     <td class="py-2 px-3 font-bold text-lavender-950">
-                        <input type="text" value="${item.term || ''}" onblur="updateTestBenchItem(${idx}, 'term', this.value)" class="w-full bg-transparent font-bold text-slate-800 border-b border-dashed border-lavender-300 focus:outline-none focus:border-lavender-600">
+                        <input type="text" value="${item.term \vert{}\vert{} ''}" onblur="updateTestBenchItem(${idx}, 'term', this.value)" class="w-full bg-transparent font-bold text-slate-800 border-b border-dashed border-lavender-300 focus:outline-none focus:border-lavender-600">
                     </td>
                     <td class="py-2 px-3">
                         <select onchange="updateTestBenchItem(${idx}, 'category', this.value)" class="bg-lavender-50/70 border border-lavender-200 rounded px-1.5 py-0.5 text-xs text-slate-700">
@@ -924,10 +930,10 @@
                         </select>
                     </td>
                     <td class="py-2 px-3">
-                        <input type="text" value="${item.target || ''}" onblur="updateTestBenchItem(${idx}, 'target', this.value)" placeholder="Phonetic guide..." class="w-full bg-transparent font-mono text-[11px] text-slate-700 border-b border-dashed border-lavender-300 focus:outline-none focus:border-lavender-600">
+                        <input type="text" value="${item.target \vert{}\vert{} ''}" onblur="updateTestBenchItem(${idx}, 'target', this.value)" placeholder="Phonetic guide..." class="w-full bg-transparent font-mono text-[11px] text-slate-700 border-b border-dashed border-lavender-300 focus:outline-none focus:border-lavender-600">
                     </td>
                     <td class="py-2 px-3">
-                        <input type="text" value="${item.context || ''}" onblur="updateTestBenchItem(${idx}, 'context', this.value)" placeholder="Context line..." class="w-full bg-transparent text-slate-600 border-b border-dashed border-lavender-300 focus:outline-none focus:border-lavender-600">
+                        <input type="text" value="${item.context \vert{}\vert{} ''}" onblur="updateTestBenchItem(${idx}, 'context', this.value)" placeholder="Context line..." class="w-full bg-transparent text-slate-600 border-b border-dashed border-lavender-300 focus:outline-none focus:border-lavender-600">
                     </td>
                     <td class="py-2 px-3 text-center">
                         <select onchange="updateTestBenchItem(${idx}, 'status', this.value)" class="rounded-full px-2 py-0.5 text-[11px] ${statusBadge}">
@@ -1016,630 +1022,5 @@
                     const currentVal = client.scores[dim.name] && client.scores[dim.name][c] !== undefined ? client.scores[dim.name][c] : '';
                     rowHtml += `
                         <td class="py-1 px-1 text-center">
-                            <select onchange="updateDimensionScore('${dim.name}', ${c}, this.value)" class="w-full text-center bg-lavender-50/70 border border-lavender-200 rounded-lg py-1 px-0.5 font-medium text-slate-800 focus:ring-2 focus:ring-lavender-500 focus:outline-none text-xs">
-                                <option value="" ${currentVal === '' ? 'selected' : ''}>-</option>
-                                <option value="1" ${currentVal == 1 ? 'selected' : ''}>1</option>
-                                <option value="2" ${currentVal == 2 ? 'selected' : ''}>2</option>
-                                <option value="3" ${currentVal == 3 ? 'selected' : ''}>3</option>
-                                <option value="4" ${currentVal == 4 ? 'selected' : ''}>4</option>
-                                <option value="5" ${currentVal == 5 ? 'selected' : ''}>5</option>
-                                <option value="N/A" ${currentVal === 'N/A' ? 'selected' : ''}>N/A</option>
-                            </select>
-                        </td>
-                    `;
-                }
-
-                const currentComment = client.comments[dim.name] || '';
-
-                rowHtml += `
-                    <td id="avg-${dim.id}" class="py-2 px-1 text-center font-bold text-lavender-900 bg-lavender-50/80 border-l border-lavender-200">-</td>
-                    <td id="min-${dim.id}" class="py-2 px-1 text-center font-medium text-slate-600 bg-lavender-50/80">-</td>
-                    <td id="max-${dim.id}" class="py-2 px-1 text-center font-medium text-slate-600 bg-lavender-50/80">-</td>
-                    <td class="py-1.5 px-2 bg-white">
-                        <textarea onblur="updateDimensionComment('${dim.name}', this.value)" placeholder="Add evidence, transcript quotes, or timestamps..." rows="2" class="w-full text-xs bg-lavender-50/40 border border-lavender-200/80 rounded-lg p-1.5 text-slate-700 focus:bg-white focus:ring-2 focus:ring-lavender-500 focus:outline-none transition resize-y">${currentComment}</textarea>
-                    </td>
-                `;
-
-                tr.innerHTML = rowHtml;
-                tbody.appendChild(tr);
-            });
-        }
-
-        function updateDimensionScore(dimName, callIdx, val) {
-            const client = allClients[activeClientId];
-            if (!client.scores[dimName]) client.scores[dimName] = [];
-            
-            client.scores[dimName][callIdx] = (val === 'N/A' ? 'N/A' : (val === '' ? '' : Number(val)));
-            saveStateToStorage();
-            updateCalculationsAndCharts();
-        }
-
-        function updateDimensionComment(dimName, noteText) {
-            const client = allClients[activeClientId];
-            if (!client.comments) client.comments = {};
-            client.comments[dimName] = noteText;
-            saveStateToStorage();
-        }
-
-        function addCallColumn() {
-            const client = allClients[activeClientId];
-            if (client.callCount >= 10) {
-                alert("Maximum limit of 10 calls reached.");
-                return;
-            }
-            client.callCount = (client.callCount || 0) + 1;
-            saveStateToStorage();
-            renderActiveClient();
-        }
-
-        function removeLastCallColumn() {
-            const client = allClients[activeClientId];
-            if (client.callCount <= 1) return;
-            client.callCount -= 1;
-            
-            STREAMLINED_DIMENSIONS.forEach(d => {
-                if (client.scores[d.name] && client.scores[d.name].length > client.callCount) {
-                    client.scores[d.name].pop();
-                }
-            });
-            saveStateToStorage();
-            renderActiveClient();
-        }
-
-        function resetCurrentScores() {
-            if (!confirm("Reset all ratings for this client profile?")) return;
-            const client = allClients[activeClientId];
-            STREAMLINED_DIMENSIONS.forEach(d => client.scores[d.name] = []);
-            saveStateToStorage();
-            renderActiveClient();
-        }
-
-        function updateCalculationsAndCharts() {
-            const client = allClients[activeClientId];
-            if (!client) return;
-
-            let dimAverages = [];
-            let totalSum = 0;
-            let totalValidCount = 0;
-            let meetingTargetCount = 0;
-            const targetScore = client.targetBenchmark || 3.50;
-
-            const dashTbody = document.getElementById('dashboard-summary-tbody');
-            dashTbody.innerHTML = '';
-
-            STREAMLINED_DIMENSIONS.forEach(dim => {
-                const rawScores = client.scores[dim.name] || [];
-                const validScores = rawScores.filter(s => typeof s === 'number' && !isNaN(s));
-
-                let avg = 0, min = '-', max = '-';
-                if (validScores.length > 0) {
-                    const sum = validScores.reduce((a, b) => a + b, 0);
-                    avg = (sum / validScores.length).toFixed(2);
-                    min = Math.min(...validScores);
-                    max = Math.max(...validScores);
-                    totalSum += sum;
-                    totalValidCount += validScores.length;
-                    if (Number(avg) >= targetScore) meetingTargetCount++;
-                }
-
-                const avgEl = document.getElementById(`avg-${dim.id}`);
-                const minEl = document.getElementById(`min-${dim.id}`);
-                const maxEl = document.getElementById(`max-${dim.id}`);
-                if (avgEl) avgEl.innerText = validScores.length > 0 ? avg : '-';
-                if (minEl) minEl.innerText = min;
-                if (maxEl) maxEl.innerText = max;
-
-                dimAverages.push({ name: dim.name, avg: validScores.length > 0 ? Number(avg) : 0 });
-
-                let statusBadge = `<span class="px-2.5 py-0.5 text-xs font-medium rounded-full bg-slate-100 text-slate-500">No Data</span>`;
-                if (validScores.length > 0) {
-                    if (Number(avg) >= targetScore) {
-                        statusBadge = `<span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">On Target (≥${targetScore})</span>`;
-                    } else if (Number(avg) >= 3.0) {
-                        statusBadge = `<span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-amber-100 text-amber-800 border border-amber-200">Acceptable (3.0-3.4)</span>`;
-                    } else {
-                        statusBadge = `<span class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-rose-100 text-rose-800 border border-rose-200">Needs Attention (<3.0)</span>`;
-                    }
-                }
-
-                const subBadges = dim.subComponents.map(s => `<span class="bg-lavender-100 text-lavender-800 text-[10px] px-1.5 py-0.5 rounded font-medium">${s}</span>`).join(' ');
-                const noteSummary = (client.comments && client.comments[dim.name]) ? client.comments[dim.name] : '<span class="text-slate-400 italic">No evidence notes recorded.</span>';
-
-                dashTbody.innerHTML += `
-                    <tr class="hover:bg-lavender-50/50 transition">
-                        <td class="py-2.5 px-4 font-semibold text-slate-800">${dim.name}</td>
-                        <td class="py-2.5 px-4"><div class="flex flex-wrap gap-1">${subBadges}</div></td>
-                        <td class="py-2.5 px-4 text-center font-bold ${Number(avg) >= targetScore ? 'text-lavender-700' : 'text-slate-700'}">${validScores.length > 0 ? avg : '-'}</td>
-                        <td class="py-2.5 px-4 text-center text-slate-500 font-mono">${min} / ${max}</td>
-                        <td class="py-2.5 px-4">${statusBadge}</td>
-                        <td class="py-2.5 px-4 text-slate-600 max-w-xs truncate">${noteSummary}</td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById('kpi-total-calls').innerText = client.callCount || 0;
-            const overallAvg = totalValidCount > 0 ? (totalSum / totalValidCount).toFixed(2) : '0.00';
-            document.getElementById('kpi-overall-avg').innerText = `${overallAvg} / 5.0`;
-            document.getElementById('kpi-passing-dims').innerText = `${meetingTargetCount} / ${STREAMLINED_DIMENSIONS.length}`;
-            document.getElementById('kpi-logged-issues').innerText = (client.issues || []).length;
-
-            renderCharts(dimAverages, targetScore);
-        }
-
-        function renderCharts(dimAverages, targetScore) {
-            const labels = dimAverages.map(d => d.name);
-            const dataVals = dimAverages.map(d => d.avg);
-
-            const ctxBar = document.getElementById('dimensionBarChart').getContext('2d');
-            if (barChartInstance) barChartInstance.destroy();
-
-            barChartInstance = new Chart(ctxBar, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Average Score',
-                        data: dataVals,
-                        backgroundColor: dataVals.map(v => v >= targetScore ? '#7c52d3' : (v >= 3.0 ? '#f59e0b' : '#ef4444')),
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    scales: {
-                        x: { min: 0, max: 5, grid: { color: '#f4effc' } },
-                        y: { grid: { display: false }, ticks: { font: { size: 9 } } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-
-            const ctxRadar = document.getElementById('dimensionRadarChart').getContext('2d');
-            if (radarChartInstance) radarChartInstance.destroy();
-
-            radarChartInstance = new Chart(ctxRadar, {
-                type: 'radar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Streamlined Trait Score',
-                        data: dataVals,
-                        backgroundColor: 'rgba(124, 82, 211, 0.25)',
-                        borderColor: '#7c52d3',
-                        pointBackgroundColor: '#5733a1',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            min: 0,
-                            max: 5,
-                            ticks: { stepSize: 1, display: false },
-                            grid: { color: '#e7def8' },
-                            pointLabels: { font: { size: 8.5 } }
-                        }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
-
-        function renderRubricCards(filterVal = "ALL") {
-            const container = document.getElementById('rubric-cards-container');
-            container.innerHTML = '';
-
-            STREAMLINED_DIMENSIONS.forEach(d => {
-                if (filterVal !== "ALL" && d.name !== filterVal) return;
-
-                const subBadges = d.subComponents.map(s => `<span class="bg-lavender-100 text-lavender-900 text-xs px-2 py-0.5 rounded font-semibold border border-lavender-200">${s}</span>`).join(' ');
-
-                container.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-lavender-200 hover:border-lavender-300 transition">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-3 border-b border-lavender-100 pb-2">
-                            <div>
-                                <h3 class="text-sm font-bold text-lavender-950 flex items-center gap-2">
-                                    <i data-lucide="bookmark" class="w-4 h-4 text-lavender-600"></i> ${d.name}
-                                </h3>
-                                <div class="mt-1 flex flex-wrap gap-1">${subBadges}</div>
-                            </div>
-                            <span class="text-[10px] bg-lavender-50 text-lavender-700 font-semibold px-2.5 py-1 rounded-full border border-lavender-200">1-5 Streamlined Standard</span>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 text-xs">
-                            <div class="p-3 rounded-xl bg-rose-50/70 border border-rose-100">
-                                <span class="font-bold text-rose-700 uppercase tracking-wide block mb-1">1 - Poor Anchor</span>
-                                <p class="text-rose-900 leading-relaxed">${d.p1}</p>
-                            </div>
-                            <div class="p-3 rounded-xl bg-amber-50/70 border border-amber-100">
-                                <span class="font-bold text-amber-700 uppercase tracking-wide block mb-1">3 - Acceptable Anchor</span>
-                                <p class="text-amber-900 leading-relaxed">${d.p3}</p>
-                            </div>
-                            <div class="p-3 rounded-xl bg-lavender-50/80 border border-lavender-200">
-                                <span class="font-bold text-lavender-800 uppercase tracking-wide block mb-1">5 - Strong Anchor</span>
-                                <p class="text-lavender-950 leading-relaxed">${d.p5}</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            lucide.createIcons();
-        }
-
-        function filterRubricCards(val) {
-            renderRubricCards(val);
-        }
-
-        function renderIssuesTable() {
-            const client = allClients[activeClientId];
-            if (!client) return;
-
-            const tbody = document.getElementById('issue-tbody');
-            const filterDim = document.getElementById('issue-filter-dim').value;
-            const filterLayer = document.getElementById('issue-filter-layer').value;
-            const filterImpact = document.getElementById('issue-filter-impact').value;
-
-            tbody.innerHTML = '';
-            let issues = client.issues || [];
-
-            if (filterDim !== "ALL") issues = issues.filter(i => i.dim === filterDim);
-            if (filterLayer !== "ALL") issues = issues.filter(i => i.layer === filterLayer);
-            if (filterImpact !== "ALL") issues = issues.filter(i => i.impact === filterImpact);
-
-            document.getElementById('issue-count-badge').innerText = `Showing ${issues.length} Issues`;
-
-            if (issues.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="10" class="py-6 text-center text-slate-400 text-xs">
-                            No matching defect issues logged for this client profile.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            issues.forEach((item) => {
-                let impactBadge = 'bg-slate-100 text-slate-700';
-                if (item.impact === 'Critical') impactBadge = 'bg-rose-100 text-rose-800 border border-rose-200 font-bold';
-                else if (item.impact === 'Major') impactBadge = 'bg-orange-100 text-orange-800 border border-orange-200 font-semibold';
-                else if (item.impact === 'Minor') impactBadge = 'bg-amber-100 text-amber-800 border border-amber-200';
-
-                let callLinkHtml = item.callLink ? item.callLink : '<span class="text-slate-300 italic">No link</span>';
-                if (item.callLink && (item.callLink.startsWith('http://') || item.callLink.startsWith('https://'))) {
-                    callLinkHtml = `<a href="${item.callLink}" target="_blank" class="text-lavender-700 font-semibold hover:underline flex items-center gap-1"><i data-lucide="external-link" class="w-3 h-3"></i> Open Link</a>`;
-                } else if (item.callLink) {
-                    callLinkHtml = `<span class="font-mono text-[11px] text-slate-700 bg-lavender-50 px-1.5 py-0.5 rounded border border-lavender-200">${item.callLink}</span>`;
-                }
-
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-lavender-50/50 transition';
-                tr.innerHTML = `
-                    <td class="py-2.5 px-3 font-semibold text-lavender-950">${item.call}</td>
-                    <td class="py-2.5 px-3">${callLinkHtml}</td>
-                    <td class="py-2.5 px-3 font-medium text-slate-800">${item.dim}</td>
-                    <td class="py-2.5 px-3 text-slate-800">${item.symptom}</td>
-                    <td class="py-2.5 px-3 text-slate-500 font-mono text-[11px]">${item.time}</td>
-                    <td class="py-2.5 px-3">
-                        <span class="bg-lavender-100 text-lavender-800 text-[10px] px-2 py-0.5 rounded-full font-medium">${item.layer}</span>
-                    </td>
-                    <td class="py-2.5 px-3">
-                        <span class="text-[10px] px-2 py-0.5 rounded-full ${impactBadge}">${item.impact}</span>
-                    </td>
-                    <td class="py-2.5 px-3 text-slate-600">${item.fix || '-'}</td>
-                    <td class="py-2.5 px-3 text-slate-600">${item.validation || '-'}</td>
-                    <td class="py-2.5 px-3 text-center">
-                        <button onclick="deleteIssueItem(${item.id})" class="p-1 text-rose-500 hover:bg-rose-50 rounded-lg transition" title="Delete issue">
-                            <i data-lucide="trash-2" class="w-4 h-4"></i>
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-            lucide.createIcons();
-        }
-
-        function exportToExcel() {
-            const client = allClients[activeClientId];
-            if (!client) return;
-
-            const wb = XLSX.utils.book_new();
-
-            // SHEET 1: Summary
-            const summaryData = [
-                ["VOICE QA - CLIENT METADATA & TEST BENCH REPORT"],
-                [],
-                ["Client Name", client.name || ""],
-                ["Company / Contact", client.company || ""],
-                ["Use Case / Workflow", client.usecase || ""],
-                ["Voice & Language Settings", client.language || ""],
-                ["Agent Version / Build", client.version || ""],
-                ["Reviewer(s)", client.reviewer || ""],
-                ["Target Pass Benchmark", client.targetBenchmark || 3.5],
-                ["Total Evaluated Calls", client.callCount || 0],
-                ["Requested Voice Description", client.description || ""],
-                ["Agent Purpose & Scope", client.purpose || ""],
-                [],
-                ["Streamlined 6-Dimension Performance Aggregation"],
-                ["Streamlined Dimension", "Sub-Components", "Multi-Call Avg", "Min Score", "Max Score", "Status vs Target"]
-            ];
-
-            STREAMLINED_DIMENSIONS.forEach(dim => {
-                const rawScores = client.scores[dim.name] || [];
-                const validScores = rawScores.filter(s => typeof s === 'number' && !isNaN(s));
-                let avg = "N/A", min = "N/A", max = "N/A", status = "No Data";
-
-                if (validScores.length > 0) {
-                    avg = (validScores.reduce((a, b) => a + b, 0) / validScores.length).toFixed(2);
-                    min = Math.min(...validScores);
-                    max = Math.max(...validScores);
-                    status = Number(avg) >= (client.targetBenchmark || 3.5) ? "Pass" : (Number(avg) >= 3.0 ? "Acceptable" : "Needs Work");
-                }
-                summaryData.push([dim.name, dim.subComponents.join(', '), avg, min, max, status]);
-            });
-
-            const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
-            XLSX.utils.book_append_sheet(wb, wsSummary, "Overview & Client Profile");
-
-            // SHEET 2: Test Bench
-            const tbHeaders = ["Term / Phrase Target", "Category", "Target Pronunciation Guide", "Expected Context", "Status"];
-            const tbRows = [tbHeaders];
-            (client.testbench || []).forEach(tb => {
-                tbRows.push([tb.term, tb.category, tb.target, tb.context, tb.status]);
-            });
-            const wsTestBench = XLSX.utils.aoa_to_sheet(tbRows);
-            XLSX.utils.book_append_sheet(wb, wsTestBench, "Pronunciation Test Bench");
-
-            // SHEET 3: Scores
-            const callHeaders = ["Streamlined Dimension", "Sub-Components"];
-            for (let c = 1; c <= client.callCount; c++) {
-                callHeaders.push(`Call ${c}`);
-            }
-            callHeaders.push("Average", "Min", "Max", "Qualitative Evidence & Timestamps");
-
-            const matrixData = [callHeaders];
-
-            STREAMLINED_DIMENSIONS.forEach(dim => {
-                const row = [dim.name, dim.subComponents.join(', ')];
-                for (let c = 0; c < client.callCount; c++) {
-                    const score = client.scores[dim.name] && client.scores[dim.name][c] !== undefined ? client.scores[dim.name][c] : "";
-                    row.push(score);
-                }
-
-                const rawScores = client.scores[dim.name] || [];
-                const validScores = rawScores.filter(s => typeof s === 'number' && !isNaN(s));
-                let avg = "-", min = "-", max = "-";
-                if (validScores.length > 0) {
-                    avg = (validScores.reduce((a, b) => a + b, 0) / validScores.length).toFixed(2);
-                    min = Math.min(...validScores);
-                    max = Math.max(...validScores);
-                }
-
-                row.push(avg, min, max, (client.comments && client.comments[dim.name]) || "");
-                matrixData.push(row);
-            });
-
-            const wsMatrix = XLSX.utils.aoa_to_sheet(matrixData);
-            XLSX.utils.book_append_sheet(wb, wsMatrix, "6-Dim Scores & Evidence");
-
-            // SHEET 4: Issues (WITH CALL LINK / ID COLUMN)
-            const issueHeaders = ["Call Target", "Call Link / Call ID", "Streamlined Dimension", "User-Visible Symptom", "Exact Evidence / Timestamp", "Failure Layer", "Impact Level", "Smallest Fix", "Validation Required"];
-            const issueRows = [issueHeaders];
-            (client.issues || []).forEach(i => {
-                issueRows.push([i.call, i.callLink || "", i.dim, i.symptom, i.time, i.layer, i.impact, i.fix || "", i.validation || ""]);
-            });
-            const wsIssues = XLSX.utils.aoa_to_sheet(issueRows);
-            XLSX.utils.book_append_sheet(wb, wsIssues, "Issue Log");
-
-            // SHEET 5: Rubric
-            const rubricHeaders = ["Streamlined Dimension", "Sub-Components", "1 - Poor Anchor", "3 - Acceptable Anchor", "5 - Strong Anchor"];
-            const rubricRows = [rubricHeaders];
-            STREAMLINED_DIMENSIONS.forEach(r => {
-                rubricRows.push([r.name, r.subComponents.join(', '), r.p1, r.p3, r.p5]);
-            });
-            const wsRubric = XLSX.utils.aoa_to_sheet(rubricRows);
-            XLSX.utils.book_append_sheet(wb, wsRubric, "6-Dim Rubric Definitions");
-
-            const fileName = `${(client.name || 'VoiceQA').replace(/\s+/g, '_')}_VoiceQA_Report.xlsx`;
-            XLSX.writeFile(wb, fileName);
-        }
-
-        function openAddIssueModal() {
-            const client = allClients[activeClientId];
-            
-            const callSelect = document.getElementById('issue-input-call');
-            callSelect.innerHTML = '';
-            for (let c = 1; c <= (client.callCount || 1); c++) {
-                const opt = document.createElement('option');
-                opt.value = `Call ${c}`;
-                opt.innerText = `Call ${c}`;
-                callSelect.appendChild(opt);
-            }
-
-            const dimSelect = document.getElementById('issue-input-dim');
-            dimSelect.innerHTML = '';
-            STREAMLINED_DIMENSIONS.forEach(d => {
-                const opt = document.createElement('option');
-                opt.value = d.name;
-                opt.innerText = d.name;
-                dimSelect.appendChild(opt);
-            });
-
-            document.getElementById('modal-add-issue').classList.remove('hidden');
-        }
-
-        function saveNewIssueForm(e) {
-            e.preventDefault();
-            const client = allClients[activeClientId];
-            if (!client.issues) client.issues = [];
-
-            const newIssue = {
-                id: Date.now(),
-                call: document.getElementById('issue-input-call').value,
-                callLink: document.getElementById('issue-input-calllink').value,
-                dim: document.getElementById('issue-input-dim').value,
-                symptom: document.getElementById('issue-input-symptom').value,
-                time: document.getElementById('issue-input-time').value,
-                impact: document.getElementById('issue-input-impact').value,
-                layer: document.getElementById('issue-input-layer').value,
-                fix: document.getElementById('issue-input-fix').value,
-                validation: document.getElementById('issue-input-validation').value
-            };
-
-            client.issues.push(newIssue);
-            saveStateToStorage();
-            closeModal('modal-add-issue');
-            renderIssuesTable();
-            updateCalculationsAndCharts();
-            document.getElementById('form-add-issue').reset();
-        }
-
-        function deleteIssueItem(issueId) {
-            const client = allClients[activeClientId];
-            if (!client || !client.issues) return;
-            client.issues = client.issues.filter(i => i.id !== issueId);
-            saveStateToStorage();
-            renderIssuesTable();
-            updateCalculationsAndCharts();
-        }
-
-        function createNewClientModal() {
-            document.getElementById('modal-profile-title').innerText = "Create New Client Profile";
-            document.getElementById('form-input-name').value = "";
-            document.getElementById('form-input-company').value = "";
-            document.getElementById('form-input-usecase').value = "";
-            document.getElementById('form-input-language').value = "en-US";
-            document.getElementById('form-input-desc').value = "";
-            document.getElementById('form-input-purpose').value = "";
-            document.getElementById('form-input-version').value = "v1.0.0";
-            document.getElementById('form-input-reviewer').value = "";
-            document.getElementById('form-input-target').value = "3.5";
-
-            document.getElementById('modal-client-profile').classList.remove('hidden');
-        }
-
-        function saveClientProfileForm(e) {
-            e.preventDefault();
-            const newId = 'client-' + Date.now();
-            allClients[newId] = {
-                id: newId,
-                name: document.getElementById('form-input-name').value,
-                company: document.getElementById('form-input-company').value,
-                usecase: document.getElementById('form-input-usecase').value,
-                language: document.getElementById('form-input-language').value,
-                description: document.getElementById('form-input-desc').value,
-                purpose: document.getElementById('form-input-purpose').value,
-                version: document.getElementById('form-input-version').value,
-                reviewer: document.getElementById('form-input-reviewer').value,
-                targetBenchmark: parseFloat(document.getElementById('form-input-target').value) || 3.5,
-                callCount: 3,
-                scores: {},
-                comments: {},
-                testbench: [],
-                issues: []
-            };
-            activeClientId = newId;
-
-            saveStateToStorage();
-            populateClientSelector();
-            renderActiveClient();
-            closeModal('modal-client-profile');
-        }
-
-        function duplicateCurrentClient() {
-            const current = allClients[activeClientId];
-            if (!current) return;
-
-            const newId = 'client-' + Date.now();
-            const cloned = JSON.parse(JSON.stringify(current));
-            cloned.id = newId;
-            cloned.name = `${current.name} (Copy)`;
-
-            allClients[newId] = cloned;
-            activeClientId = newId;
-
-            saveStateToStorage();
-            populateClientSelector();
-            renderActiveClient();
-        }
-
-        function deleteCurrentClient() {
-            if (Object.keys(allClients).length <= 1) {
-                alert("At least one client profile must remain in the app.");
-                return;
-            }
-            if (!confirm(`Delete profile "${allClients[activeClientId].name}"?`)) return;
-
-            delete allClients[activeClientId];
-            activeClientId = Object.keys(allClients)[0];
-
-            saveStateToStorage();
-            populateClientSelector();
-            renderActiveClient();
-        }
-
-        function exportClientJSON() {
-            const client = allClients[activeClientId];
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(client, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `${(client.name || 'VoiceQA').replace(/\s+/g, '_')}_Backup.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-        }
-
-        function importClientJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importedClient = JSON.parse(e.target.result);
-                    if (!importedClient.name || !importedClient.scores) {
-                        alert("Invalid Voice QA JSON file.");
-                        return;
-                    }
-                    const newId = importedClient.id || ('client-' + Date.now());
-                    importedClient.id = newId;
-                    allClients[newId] = importedClient;
-                    activeClientId = newId;
-
-                    saveStateToStorage();
-                    populateClientSelector();
-                    renderActiveClient();
-                    alert(`Imported client profile: ${importedClient.name}`);
-                } catch (err) {
-                    alert("Error parsing JSON: " + err.message);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        function downloadPrePopulatedHTML() {
-            const currentHtml = document.documentElement.outerHTML;
-            const blob = new Blob([currentHtml], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `VoiceQA_${(allClients[activeClientId].name || 'App').replace(/\s+/g, '_')}_Standalone.html`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(url);
-        }
-
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
-
-        function toggleMobileClientBar() {
-            document.getElementById('client-bar').classList.toggle('hidden');
-        }
-    </script>
-</body>
-</html>
+                            <select onchange="updateDimensionScore('${dim.name}',${c}, this.value)" class="w-full text-center bg-lavender-50/70 border border-lavender-200 rounded-lg py-1 px-0.5 font-medium text-slate-800 focus:ring-2 focus:ring-lavender-500 focus:outline-none text-xs">
+                                <option value="" ${currentVal ===
